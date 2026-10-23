@@ -1,33 +1,43 @@
-# TB OBS Auto Setup V5 Ultimate
+# TB OBS Auto Setup V9 — One-Click Live Center
 
-Professional Windows x64 WPF utility for OBS Studio configuration, diagnostics and recovery.
+Bu proje Windows için hazırlanmış bir WPF uygulamasıdır. Amaç yalnızca OBS sahneleri oluşturmak değil; OBS bağlantısını kontrol etmek, yayın kaynaklarını ve cihazlarını hazırlamak, ön kontrol yapmak ve kullanıcı son onayıyla canlı yayını başlatmaktır.
 
-## V5 modules
-- Hardware detection: CPU / GPU / RAM / thread count
-- Encoder recommendation: NVENC / AMF / QSV / x264
-- Kick / YouTube / Twitch / manual profile selection
-- Upload test and bitrate planner with network safety margin
-- Resolution/FPS planner: 1080p60, 1664x936, 720p60, 30 FPS
-- OBS WebSocket 5.x connection on localhost:4455
-- One-click OBS optimization with pre-change backup
-- Advanced Output profile parameters attempted individually with safe fallback
-- 5 professional scenes: game, just chatting, starting, BRB, ending
-- Game Capture, webcam, desktop audio, microphone and text/background sources
-- Microphone filter chain: noise suppression, compressor, expander
-- Replay Buffer start/check
-- Recording safety: MKV and local TB OBS Recordings folder
-- OBS Health: FPS, render time, render drops, output drops, OBS CPU
-- 5-second performance test
-- Scene/source inventory
-- Backup browser and rollback with pre-rollback safety backup
-- No stream key or account password collection
-- Self-contained single-file EXE through GitHub Actions
+## GitHub'a yükleme
 
-## Build
-GitHub Actions runs `dotnet publish` with .NET 8, win-x64, self-contained and single-file options. The user's PC does not need .NET installed.
+1. ZIP dosyasını bilgisayarında **klasöre çıkart**.
+2. GitHub'daki `TB-OBS-Auto-Setup` deposunu aç.
+3. ZIP'in içindeki dosya ve klasörleri depo ana dizinine yükle; `App.xaml` ve `TB_OBS_AutoSetup.csproj` doğrudan depo ana dizininde olmalı. ZIP dosyasını tek başına GitHub'a yüklemek yeterli değildir.
+4. `.github/workflows/build.yml` dosyası da `.github/workflows/` altında bulunmalı.
+5. GitHub'da **Actions → Build Windows EXE → Run workflow** seç.
+6. Workflow başarıyla bittiğinde `TB-OBS-AutoSetup-win-x64` artifact'ını indirip ZIP'ten çıkar. İçindeki EXE tek başına çalışacak şekilde yayımlanır; hedef bilgisayara .NET Runtime kurmak gerekmez.
 
-## Security
-The WebSocket password is only used to authenticate to the local OBS WebSocket server. Stream keys and platform account credentials are not requested or scraped. OBS configuration backups stay local in Documents/TB_OBS_Backups.
+## Tek tıkta yayına geçiş
 
-## Important
-Some OBS profile parameter names and source defaults vary by OBS version, encoder and hardware. V5 treats many optional operations as best-effort so one unsupported parameter does not stop the entire setup.
+1. OBS Studio kurulu olmalı.
+2. OBS'de **Araçlar → WebSocket Sunucu Ayarları** kısmından WebSocket'i etkinleştir. Varsayılan port genellikle `4455` olur. Şifre ayarlıysa uygulamaya gir.
+3. OBS'de yayın servisini daha önce ayarladıysan uygulamadaki Custom RTMP alanını boş bırak. Uygulamanın Custom RTMP alanını kullanacaksan yayın platformunun verdiği sunucu adresini ve anahtarı kendin girip kutuyu işaretle.
+4. Kaynak türünü seç: **PC oyunu (Game Capture)** veya **PS5 / HDMI yakalama kartı**.
+5. **TEK TIK: HAZIRLA + CANLIYA GEÇ** düğmesine bas. Program OBS'yi başlatmayı/bağlanmayı dener, kaynakları hazırlar, ön kontrolleri yapar ve canlı yayından hemen önce onay ister. Onay verildiğinde OBS'nin `StartStream` isteğini gönderir ve yayın durumunu doğrular.
+
+## Uygulamanın oluşturduğu/ayarladığı şeyler
+
+- `TB OYUN`, `TB JUST CHATTING`, `TB YAYIN BASLIYOR`, `TB BRB`, `TB YAYIN BITIYOR` sahneleri.
+- Seçilen moda göre Game Capture veya HDMI yakalama kartı kaynağı.
+- Mevcut cihaz listesi üzerinden kamera, mikrofon ve masaüstü sesi kaynaklarını hazırlama girişimi.
+- Upload ölçümü, güvenli bitrate önerisi ve seçilen çözünürlük/FPS ayarları.
+- MKV kayıt önerisi, isteğe bağlı yayınla birlikte kayıt ve Replay Buffer başlatma.
+- OBS Health/istatistik kontrolü, kaynak envanteri ve gizli yayın anahtarı içermeyen tanılama raporu.
+- OBS temel yapılandırmasının yedeği ve güvenli geri yükleme.
+
+## Güvenlik ve sınırlar
+
+- Uygulama mevcut OBS yayın anahtarını okumaya çalışmaz. İsteğe bağlı Custom RTMP alanına anahtarı kendin girersen yalnızca OBS hedefini yapılandırmak için kullanılır; OBS bu hedefi kendi normal ayarları gibi saklar.
+- Uygulama tarafından hazırlanan yedek ve tanılama raporuna `service.json` veya stream key eklenmez.
+- Yayına geçmeden önce **son onay ekranı** gösterilir. Bu, yanlış hedefe veya yanlış görüntüyle yayına çıkma riskini azaltır.
+- OBS API'si kameradan/HDMI kartından gerçekten görüntü geldiğini ya da mikrofonun fiziksel ses aldığını her zaman kesin doğrulayamaz. İlk yayından önce OBS önizlemesinde görüntüyü ve ses mikserini kontrol et.
+- Desteklenmeyen kaynak türü, filtre veya OBS profil parametresi otomatik zorlanmaz; logda neden belirtilir.
+- Uygulama mevcut kullanıcı sahnelerini silmez; kendi yönettiği kaynaklarda `TB ` önekini kullanır.
+
+## Derleme durumu
+
+Kaynak paketindeki GitHub Actions workflow Windows runner üzerinde .NET 8 ile `win-x64` self-contained EXE üretir. Bu geliştirme ortamında Windows/OBS oturumu olmadığı için burada gerçek OBS ile uçtan uca yayın testi yapıldığı iddia edilmemektedir. Derleme sonucu ve gerçek cihaz/OBS davranışı GitHub Actions ve kendi OBS kurulumunda doğrulanmalıdır.

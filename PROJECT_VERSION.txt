@@ -1,0 +1,5 @@
+TB OBS Auto Setup V9 - One-Click Live Center
+Build target: Windows x64 / .NET 8 WPF / self-contained single-file EXE
+OBS integration: OBS WebSocket v5.x
+
+Use the included GitHub Actions workflow to compile on Windows. A real OBS device test has not been performed in this environment.

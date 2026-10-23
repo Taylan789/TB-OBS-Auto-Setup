@@ -1,0 +1,14 @@
+# Build output
+bin/
+obj/
+publish/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# Local app logs / generated artifacts
+*.log
+TB_OBS_Backups/
