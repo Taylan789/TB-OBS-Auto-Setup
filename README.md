@@ -1,17 +1,39 @@
-# TB OBS Auto Setup
+# TB OBS Auto Setup V4 Ultimate
 
-Windows için OBS otomatik kurulum yardımcı programı.
+Windows x64 / .NET 8 WPF / self-contained single-file build.
 
-## GitHub Actions ile EXE
+## V4 modules
 
-Bu proje GitHub Actions üzerinde Windows runner kullanarak .NET 8 ile derlenir. Kullanıcının bilgisayarına .NET kurulması gerekmez.
+- Hardware analysis: CPU, GPU, RAM, thread count
+- Encoder recommendation: NVENC / AMF / QSV / x264
+- OBS auto launch
+- OBS WebSocket 5.x connection
+- Automatic OBS backup
+- 1080p60 video configuration
+- Advanced Output attempt
+- Recording directory
+- 5 professional TB scenes
+- Game Capture
+- Webcam source
+- Desktop audio + microphone
+- Text/background sources
+- Microphone filter chain attempt:
+  - Noise Suppression
+  - Compressor
+  - Expander
+- Replay Buffer start attempt
+- OBS health scan with GetStats
+- 5-second performance comparison
+- Upload speed test
+- Rollback to latest backup
+- Does not request or collect stream keys/account passwords
 
-1. `.github/workflows/build-windows.yml` workflow'unu çalıştır.
-2. İşlem tamamlanınca Actions > workflow run > Artifacts bölümünden `TB-OBS-AutoSetup-win-x64` paketini indir.
-3. ZIP içindeki `TB_OBS_AutoSetup.exe` dosyasını Windows'ta çalıştır.
+## Build
 
-EXE self-contained ve single-file olarak yayınlanır.
+GitHub Actions is included. The workflow publishes a self-contained Windows x64 EXE.
 
-## Güvenlik
+## Important
 
-Program stream key veya hesap parolası keşfetmez ve kaydetmez. OBS WebSocket parolası yalnızca yerel bağlantı için kullanıcı tarafından girilir.
+Some OBS settings are hardware/build dependent. The app uses OBS WebSocket requests and logs failures instead of stopping the entire setup.
+
+OBS Studio 28+ includes obs-websocket. The default WebSocket port is 4455.
