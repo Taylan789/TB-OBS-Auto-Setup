@@ -1,39 +1,33 @@
-# TB OBS Auto Setup V4 Ultimate
+# TB OBS Auto Setup V5 Ultimate
 
-Windows x64 / .NET 8 WPF / self-contained single-file build.
+Professional Windows x64 WPF utility for OBS Studio configuration, diagnostics and recovery.
 
-## V4 modules
-
-- Hardware analysis: CPU, GPU, RAM, thread count
+## V5 modules
+- Hardware detection: CPU / GPU / RAM / thread count
 - Encoder recommendation: NVENC / AMF / QSV / x264
-- OBS auto launch
-- OBS WebSocket 5.x connection
-- Automatic OBS backup
-- 1080p60 video configuration
-- Advanced Output attempt
-- Recording directory
-- 5 professional TB scenes
-- Game Capture
-- Webcam source
-- Desktop audio + microphone
-- Text/background sources
-- Microphone filter chain attempt:
-  - Noise Suppression
-  - Compressor
-  - Expander
-- Replay Buffer start attempt
-- OBS health scan with GetStats
-- 5-second performance comparison
-- Upload speed test
-- Rollback to latest backup
-- Does not request or collect stream keys/account passwords
+- Kick / YouTube / Twitch / manual profile selection
+- Upload test and bitrate planner with network safety margin
+- Resolution/FPS planner: 1080p60, 1664x936, 720p60, 30 FPS
+- OBS WebSocket 5.x connection on localhost:4455
+- One-click OBS optimization with pre-change backup
+- Advanced Output profile parameters attempted individually with safe fallback
+- 5 professional scenes: game, just chatting, starting, BRB, ending
+- Game Capture, webcam, desktop audio, microphone and text/background sources
+- Microphone filter chain: noise suppression, compressor, expander
+- Replay Buffer start/check
+- Recording safety: MKV and local TB OBS Recordings folder
+- OBS Health: FPS, render time, render drops, output drops, OBS CPU
+- 5-second performance test
+- Scene/source inventory
+- Backup browser and rollback with pre-rollback safety backup
+- No stream key or account password collection
+- Self-contained single-file EXE through GitHub Actions
 
 ## Build
+GitHub Actions runs `dotnet publish` with .NET 8, win-x64, self-contained and single-file options. The user's PC does not need .NET installed.
 
-GitHub Actions is included. The workflow publishes a self-contained Windows x64 EXE.
+## Security
+The WebSocket password is only used to authenticate to the local OBS WebSocket server. Stream keys and platform account credentials are not requested or scraped. OBS configuration backups stay local in Documents/TB_OBS_Backups.
 
 ## Important
-
-Some OBS settings are hardware/build dependent. The app uses OBS WebSocket requests and logs failures instead of stopping the entire setup.
-
-OBS Studio 28+ includes obs-websocket. The default WebSocket port is 4455.
+Some OBS profile parameter names and source defaults vary by OBS version, encoder and hardware. V5 treats many optional operations as best-effort so one unsupported parameter does not stop the entire setup.

@@ -14,6 +14,14 @@
         <SolidColorBrush x:Key="DangerBrush" Color="#FF5570"/>
         <SolidColorBrush x:Key="AmberBrush" Color="#FFB84D"/>
 
+        <Style x:Key="CardStyle" TargetType="Border"><Setter Property="Background" Value="{StaticResource PanelBrush}"/><Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="12"/><Setter Property="Padding" Value="13"/></Style>
+        <Style x:Key="InnerCard" TargetType="Border"><Setter Property="Background" Value="{StaticResource Panel2Brush}"/><Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="12"/><Setter Property="Padding" Value="15"/></Style>
+        <Style x:Key="CardLabel" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource MutedBrush}"/><Setter Property="FontSize" Value="10"/></Style>
+        <Style x:Key="CardValue" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource TextBrush}"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,5,0,0"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/></Style>
+
+        <Style TargetType="TabControl"><Setter Property="Foreground" Value="{StaticResource TextBrush}"/><Setter Property="Background" Value="{StaticResource PanelBrush}"/></Style>
+        <Style TargetType="TabItem"><Setter Property="Foreground" Value="{StaticResource TextBrush}"/><Setter Property="Padding" Value="16,9"/></Style>
+
         <Style TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>

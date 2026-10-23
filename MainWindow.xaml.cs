@@ -17,13 +17,16 @@ public partial class MainWindow : Window
     int cpuCores;
     ObsWebSocketClient? obs;
     string lastBackup = "";
+    double lastUploadMbps;
+    int recommendedBitrateKbps = 6000;
 
     public MainWindow()
     {
         InitializeComponent();
         Analyze();
         Log("TB OBS Auto Setup V4 Ultimate hazır.");
-        Log("Yeni modüller: upload testi, OBS health, performance, replay buffer, audio filters, rollback.");
+        Log("V5 Ultimate hazır: auto-tune, bitrate planner, diagnostics, scenes, audio, recovery.");
+        UpdateBitrateRecommendation();
     }
 
     void Log(string text)
@@ -211,6 +214,7 @@ public partial class MainWindow : Window
             await ApplyRecordingDirectory();
             await CreateProfessionalScenes();
             await ConfigureAudioFilters();
+            await ConfigureRecordingSafety();
             await TryStartReplayBuffer();
             await HealthCheck();
 
@@ -238,34 +242,43 @@ public partial class MainWindow : Window
 
     async Task ApplyVideo()
     {
+        int width = 1920, height = 1080;
+        string resolution = (ResolutionBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() ?? "1920x1080";
+        if (resolution == "1664x936") { width = 1664; height = 936; }
+        if (resolution == "1280x720") { width = 1280; height = 720; }
+        int fps = (FpsBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() == "30" ? 30 : 60;
+
         await obs!.CallAsync("SetVideoSettings", new
         {
-            baseWidth = 1920,
-            baseHeight = 1080,
-            outputWidth = 1920,
-            outputHeight = 1080,
-            fpsNumerator = 60,
-            fpsDenominator = 1
+            baseWidth = width, baseHeight = height, outputWidth = width, outputHeight = height,
+            fpsNumerator = fps, fpsDenominator = 1
         });
 
-        Log("✓ Video: 1920x1080 / 60 FPS");
+        ProfileText.Text = $"{width}x{height} • {fps} FPS";
+        Log($"✓ Video: {width}x{height} / {fps} FPS");
     }
 
     async Task ApplyOutput()
     {
+        await TryProfileParameter("Output", "Mode", "Advanced", "Output modu: Advanced");
+        await TryProfileParameter("Output", "Encoder", GetEncoderPlan().Split(' ')[0], "Encoder");
+        await TryProfileParameter("Output", "Bitrate", recommendedBitrateKbps.ToString(), $"Bitrate: {recommendedBitrateKbps} Kbps");
+        await TryProfileParameter("Output", "Keyframe Interval", "2", "Keyframe interval: 2s");
+        await TryProfileParameter("Output", "Profile", "high", "H.264 profile: high");
+        await TryProfileParameter("Output", "B-frames", "2", "B-frames: 2");
+        await TryProfileParameter("Output", "RecFormat", "mkv", "Recording format: MKV");
+    }
+
+    async Task TryProfileParameter(string category, string name, string value, string success)
+    {
         try
         {
-            await obs!.CallAsync("SetProfileParameter", new
-            {
-                parameterCategory = "Output",
-                parameterName = "Mode",
-                parameterValue = "Advanced"
-            });
-            Log("✓ Output modu: Advanced");
+            await obs!.CallAsync("SetProfileParameter", new { parameterCategory = category, parameterName = name, parameterValue = value });
+            Log("✓ " + success);
         }
         catch (Exception ex)
         {
-            Log("! Advanced output ayarı atlandı: " + ex.Message);
+            Log($"• {name} otomatik ayarlanamadı: {ex.Message}");
         }
     }
 
@@ -286,6 +299,20 @@ public partial class MainWindow : Window
         {
             Log("! Kayıt klasörü ayarlanamadı: " + ex.Message);
         }
+    }
+
+    async Task ConfigureRecordingSafety()
+    {
+        try
+        {
+            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "TB OBS Recordings");
+            Directory.CreateDirectory(dir);
+            await TryProfileParameter("Output", "RecType", "Standard", "Recording type: Standard");
+            await TryProfileParameter("Output", "RecFormat", "mkv", "Recording format: MKV");
+            await TryProfileParameter("Output", "RecEncoder", "(Use stream encoder)", "Recording encoder: stream encoder");
+            Log("✓ Kayıt güvenliği: MKV + yerel TB OBS Recordings klasörü.");
+        }
+        catch (Exception ex) { Log("! Kayıt güvenliği ayarı atlandı: " + ex.Message); }
     }
 
     async Task CreateProfessionalScenes()
@@ -360,9 +387,12 @@ public partial class MainWindow : Window
             });
             Log("✓ Game Capture eklendi.");
         }
-        catch
+        catch (Exception ex)
         {
-            await AddExistingSourceToScene(scene, source);
+            if (await SourceExists(source))
+                await AddExistingSourceToScene(scene, source);
+            else
+                Log("! Game Capture oluşturulamadı: " + ex.Message);
         }
     }
 
@@ -391,10 +421,17 @@ public partial class MainWindow : Window
 
             Log("✓ Webcam kaynağı eklendi (OBS varsayılan cihazı).");
         }
-        catch
+        catch (Exception ex)
         {
-            await AddExistingSourceToScene(scene, source);
-            Log("! Webcam mevcut kaynak olarak bağlanmaya çalışıldı.");
+            if (await SourceExists(source))
+            {
+                await AddExistingSourceToScene(scene, source);
+                Log("• Webcam mevcut kaynak olarak sahneye bağlandı.");
+            }
+            else
+            {
+                Log("! Webcam oluşturulamadı: " + ex.Message);
+            }
         }
     }
 
@@ -487,9 +524,12 @@ public partial class MainWindow : Window
             });
             Log("✓ Metin kaynağı: " + text);
         }
-        catch
+        catch (Exception ex)
         {
-            await AddExistingSourceToScene(scene, source);
+            if (await SourceExists(source))
+                await AddExistingSourceToScene(scene, source);
+            else
+                Log($"! Metin kaynağı oluşturulamadı: {source} — {ex.Message}");
         }
     }
 
@@ -512,10 +552,33 @@ public partial class MainWindow : Window
             });
             Log("✓ Arka plan kaynağı eklendi.");
         }
-        catch
+        catch (Exception ex)
         {
-            await AddExistingSourceToScene(scene, source);
+            if (await SourceExists(source))
+                await AddExistingSourceToScene(scene, source);
+            else
+                Log($"! Arka plan kaynağı oluşturulamadı: {source} — {ex.Message}");
         }
+    }
+
+    async Task<bool> SourceExists(string source)
+    {
+        try
+        {
+            var result = await obs!.CallAsync("GetInputList");
+            if (result.ValueKind == JsonValueKind.Undefined ||
+                !result.TryGetProperty("inputs", out var inputs))
+                return false;
+
+            foreach (var input in inputs.EnumerateArray())
+            {
+                if (input.TryGetProperty("inputName", out var name) &&
+                    string.Equals(name.GetString(), source, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+        }
+        catch { }
+        return false;
     }
 
     async Task AddExistingSourceToScene(string scene, string source)
@@ -708,6 +771,9 @@ public partial class MainWindow : Window
 
             double seconds = Math.Max(0.001, sw.Elapsed.TotalSeconds);
             double mbps = data.Length * 8d / seconds / 1_000_000d;
+            lastUploadMbps = mbps;
+            UploadBox.Text = mbps.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+            UpdateBitrateRecommendation();
 
             Log($"✓ Upload test sonucu: yaklaşık {mbps:0.0} Mbps");
             Log("• Önerilen yayın bitrate'i bunun tamamı değil; ağ payı bırakılmalıdır.");
@@ -717,6 +783,67 @@ public partial class MainWindow : Window
             Log("! Upload testi çalışmadı: " + ex.Message);
             Log("• Bu test harici speed-test sunucusuna erişim gerektirir.");
         }
+    }
+
+    void Platform_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => UpdateBitrateRecommendation();
+
+    void Bitrate_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateBitrateRecommendation();
+        Log($"✓ Bitrate planı: {recommendedBitrateKbps} Kbps ({(PlatformBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content})");
+    }
+
+    void UpdateBitrateRecommendation()
+    {
+        double upload = lastUploadMbps;
+        if (double.TryParse(UploadBox?.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var typed)) upload = typed;
+        if (upload <= 0)
+        {
+            recommendedBitrateKbps = 6000;
+            if (BitrateRecommendation is not null) BitrateRecommendation.Text = "Öneri: önce upload testi yap.";
+            if (BitrateCard is not null) BitrateCard.Text = "6 Mbps";
+            return;
+        }
+
+        string platform = (PlatformBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString() ?? "Kick";
+        double safeMbps = upload * 0.70;
+        if (platform == "YouTube") safeMbps = Math.Min(safeMbps, 9.0);
+        if (platform == "Twitch") safeMbps = Math.Min(safeMbps, 6.0);
+        if (platform == "Kick") safeMbps = Math.Min(safeMbps, 8.0);
+        recommendedBitrateKbps = Math.Max(2500, (int)(safeMbps * 1000 / 500) * 500);
+
+        if (BitrateRecommendation is not null) BitrateRecommendation.Text = $"Öneri: {recommendedBitrateKbps} Kbps • upload {upload:0.0} Mbps • %30 ağ payı";
+        if (BitrateCard is not null) BitrateCard.Text = $"{recommendedBitrateKbps / 1000.0:0.0} Mbps";
+    }
+
+    async void Inventory_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await EnsureConnected();
+            var scenes = await obs!.CallAsync("GetSceneList");
+            var inputs = await obs.CallAsync("GetInputList");
+            int sceneCount = 0, inputCount = 0;
+            if (scenes.TryGetProperty("scenes", out var sceneArray) && sceneArray.ValueKind == JsonValueKind.Array)
+            {
+                sceneCount = sceneArray.GetArrayLength();
+                Log("--- SAHNE ENVANTERİ ---");
+                foreach (var item in sceneArray.EnumerateArray()) if (item.TryGetProperty("sceneName", out var n)) Log("• " + n.GetString());
+            }
+            if (inputs.TryGetProperty("inputs", out var inputArray) && inputArray.ValueKind == JsonValueKind.Array)
+            {
+                inputCount = inputArray.GetArrayLength();
+                Log("--- KAYNAK ENVANTERİ ---");
+                foreach (var item in inputArray.EnumerateArray())
+                {
+                    string n = item.TryGetProperty("inputName", out var ne) ? ne.GetString() ?? "?" : "?";
+                    string k = item.TryGetProperty("inputKind", out var ke) ? ke.GetString() ?? "?" : "?";
+                    Log($"• {n} [{k}]");
+                }
+            }
+            SceneCountText.Text = $"{sceneCount} sahne / {inputCount} kaynak";
+        }
+        catch (Exception ex) { Log("Envanter hatası: " + ex.Message); }
     }
 
     string BackupObsConfig()
