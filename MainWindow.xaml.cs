@@ -14,7 +14,7 @@ namespace TB_OBS_AutoSetup;
 
 public partial class MainWindow : Window
 {
-    private const string AppTitle = "TB OBS Auto Setup V9 One-Click Live Center";
+    private const string AppTitle = "TB OBS Auto Setup V10 Professional Live Center";
     private const string Prefix = "TB ";
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(30) };
 
@@ -48,7 +48,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Analyze();
-        Log("TB OBS Auto Setup V9 One-Click Live Center hazır.");
+        Log("TB OBS Auto Setup V10 Professional Live Center hazır.");
         Log("Tek tuş akışı: hedefi/cihazları hazırla → ön kontrol → son onay → StartStream. OBS'de kayıtlı yayın anahtarı okunmaz; özel RTMP anahtarı yalnızca kullanıcı girerse OBS'ye uygulanır.");
         UpdateBitrateRecommendation();
     }
@@ -377,7 +377,7 @@ public partial class MainWindow : Window
         {
             PlanText.Text = "OBS kontrol ediliyor…";
             ReadinessText.Text = "OBS bağlantısı ve çıkış durumu kontrol ediliyor…";
-            Log("════════ V9 YAYIN HAZIRLIĞI BAŞLADI ════════");
+            Log("════════ V10 YAYIN HAZIRLIĞI BAŞLADI ════════");
             await EnsureObsRunningAndConnectedAsync();
             await RefreshObsInventory();
 
@@ -433,6 +433,9 @@ public partial class MainWindow : Window
             try { await HealthCheck(); }
             catch (Exception ex) { Log("Kurulum sonrası health verisi alınamadı: " + ex.Message); }
 
+            // Final authoritative inventory refresh immediately before preflight.
+            // No live start is allowed from stale cached source/scene state.
+            await RefreshObsInventory();
             var preflight = await CheckLiveReadinessAsync();
             if (preflight.Blockers.Count > 0)
             {
@@ -448,7 +451,7 @@ public partial class MainWindow : Window
             ReadinessText.Text = "HAZIRLIK TAMAM • " + warningsText;
             ReadinessText.Foreground = preflight.Warnings.Count == 0 ? Brushes.LightGreen : Brushes.Gold;
             PlanText.Text = "Yayına hazır — başlatma onayı bekleniyor";
-            Log("════════ V9 YAYIN HAZIRLIĞI TAMAMLANDI ════════");
+            Log("════════ V10 YAYIN HAZIRLIĞI TAMAMLANDI ════════");
             Log("Aktif sahne TB OYUN; seçili kaynak modu: " + GetSelectedSourceMode());
             Log(customRtmpAppliedThisRun
                 ? "Bu hazırlıkta kullanıcı tarafından verilen Custom RTMP hedefi OBS'ye uygulandı."
@@ -493,6 +496,14 @@ public partial class MainWindow : Window
                 return;
             }
 
+            if (!await FinalLiveGateAsync())
+            {
+                preparedForLive = false;
+                PlanText.Text = "Son güvenlik kontrolü başarısız";
+                ReadinessText.Text = "Yayın başlatılmadı. Son kontrol başarısız.";
+                return;
+            }
+
             string platform = (PlatformBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Platform";
             string mode = GetSelectedSourceMode();
             string bitrate = recommendedBitrateKbps > 0 ? recommendedBitrateKbps + " Kbps öneri" : "OBS'deki mevcut bitrate";
@@ -532,8 +543,19 @@ public partial class MainWindow : Window
                 return;
             }
 
+            // Re-check the stream state after the confirmation dialog. This prevents a stale
+            // preflight result from causing a duplicate StartStream request.
+            var finalStreamCheck = await obs.CallAsync("GetStreamStatus");
+            if (ReadRequiredBool(finalStreamCheck, "outputActive", "OBS yayın durumu"))
+            {
+                Log("Onay penceresi açıkken yayın zaten başlamış; ikinci StartStream gönderilmedi.");
+                PlanText.Text = "Zaten canlı yayındasın";
+                return;
+            }
+
             streamStartRequested = true;
             PlanText.Text = "OBS yayın başlatıyor…";
+            Log("StartStream gönderiliyor…");
             await obs.CallAsync("StartStream");
             bool streamActive = false;
             for (int i = 0; i < 30; i++)
@@ -623,8 +645,9 @@ public partial class MainWindow : Window
         else
         {
             string expectedKind = mode.StartsWith("PS5", StringComparison.OrdinalIgnoreCase) ? "dshow_input" : "game_capture";
-            if (inputKindByName.TryGetValue(expectedSource, out string? actualKind) && actualKind.Length > 0 &&
-                !InputKindsCompatible(actualKind, expectedKind))
+            if (!inputKindByName.TryGetValue(expectedSource, out string? actualKind) || actualKind.Length == 0)
+                result.Blockers.Add($"{expectedSource} kaynak türü doğrulanamadı; güvenli yayın başlatmak için kaynağı yeniden oluşturup tekrar hazırla.");
+            else if (!InputKindsCompatible(actualKind, expectedKind))
                 result.Blockers.Add($"{expectedSource} yanlış OBS kaynak türü ({actualKind}). Doğru tür {expectedKind}; kaynak çakışmasını OBS'de düzelt.");
             if (!await HasSceneSource("TB OYUN", expectedSource)) result.Blockers.Add($"{expectedSource}, TB OYUN sahnesine bağlı değil.");
         }
@@ -723,6 +746,27 @@ public partial class MainWindow : Window
         if (result.Blockers.Count == 0)
             result.Warnings.Add("Son göz kontrolü: OBS önizlemede görüntü, ses mikserinde mikrofon ve oyun/capture kartı sesi görünmeli. Siyah görüntü veya sessizlik sadece API ile kesin teşhis edilemez.");
         return result;
+    }
+
+    private async Task<bool> FinalLiveGateAsync()
+    {
+        try
+        {
+            await RefreshObsInventory();
+            var preflight = await CheckLiveReadinessAsync();
+            if (preflight.Blockers.Count > 0)
+            {
+                Log("Final Live Gate başarısız: " + string.Join(" | ", preflight.Blockers));
+                return false;
+            }
+            Log("Final Live Gate geçti: sahne, kaynak, cihaz ve OBS çıkış durumu doğrulandı.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log("Final Live Gate okunamadı: " + ex.Message);
+            return false;
+        }
     }
 
     private async Task<bool> HasSceneSource(string sceneName, string sourceName)

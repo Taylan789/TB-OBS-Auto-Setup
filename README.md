@@ -1,4 +1,4 @@
-# TB OBS Auto Setup V9 — One-Click Live Center
+# TB OBS Auto Setup V11 — One-Click Live Center
 
 Bu proje Windows için hazırlanmış bir WPF uygulamasıdır. Amaç yalnızca OBS sahneleri oluşturmak değil; OBS bağlantısını kontrol etmek, yayın kaynaklarını ve cihazlarını hazırlamak, ön kontrol yapmak ve kullanıcı son onayıyla canlı yayını başlatmaktır.
 
@@ -41,3 +41,10 @@ Bu proje Windows için hazırlanmış bir WPF uygulamasıdır. Amaç yalnızca O
 ## Derleme durumu
 
 Kaynak paketindeki GitHub Actions workflow Windows runner üzerinde .NET 8 ile `win-x64` self-contained EXE üretir. Bu geliştirme ortamında Windows/OBS oturumu olmadığı için burada gerçek OBS ile uçtan uca yayın testi yapıldığı iddia edilmemektedir. Derleme sonucu ve gerçek cihaz/OBS davranışı GitHub Actions ve kendi OBS kurulumunda doğrulanmalıdır.
+
+
+## V11 safety model
+
+V11 does not blindly send OBS requests. Before a live start it refreshes scene/source inventory, verifies the selected source kind, verifies the source is actually attached to the TB OYUN scene, checks the current program scene, checks stream state again after the confirmation dialog, and only then sends StartStream.
+
+The application never reads an existing OBS stream key. Custom RTMP credentials are only sent when the user explicitly enters them. Stream keys are not written to logs, diagnostics, or application-created backups.
