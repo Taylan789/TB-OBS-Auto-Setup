@@ -1,0 +1,41 @@
+<Window x:Class="TB_OBS_AutoSetup.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="TB OBS Auto Setup V2" Width="1050" Height="700" WindowStartupLocation="CenterScreen">
+ <Grid Margin="24">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+  <TextBlock Text="TB OBS AUTO SETUP V2" FontSize="30" FontWeight="Bold"/>
+  <TextBlock Grid.Row="1" Margin="0,6,0,18" Text="Donanım analizi • OBS bağlantısı • otomatik video/output/sahne ayarları" FontSize="15"/>
+  <Grid Grid.Row="2">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
+   <Border BorderBrush="#555" BorderThickness="1" CornerRadius="10" Padding="18" Margin="0,0,12,0">
+    <StackPanel>
+     <TextBlock Text="SİSTEM" FontSize="18" FontWeight="Bold"/>
+     <TextBlock x:Name="CpuText" Margin="0,15,0,0"/>
+     <TextBlock x:Name="GpuText" Margin="0,8,0,0"/>
+     <TextBlock x:Name="RamText" Margin="0,8,0,0"/>
+     <TextBlock x:Name="ObsText" Margin="0,8,0,0"/>
+     <TextBlock x:Name="PlanText" Margin="0,18,0,0" TextWrapping="Wrap"/>
+     <Separator Margin="0,15"/>
+     <TextBlock Text="OBS WebSocket" FontSize="16" FontWeight="Bold"/>
+     <StackPanel Orientation="Horizontal">
+      <TextBlock Text="Şifre:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+      <PasswordBox x:Name="PasswordBox" Width="190"/>
+     </StackPanel>
+     <TextBlock Text="Port: 4455 (varsayılan)" Margin="0,5,0,0"/>
+     <Button Content="1 • SİSTEMİ ANALİZ ET" Click="Analyze_Click"/>
+     <Button Content="2 • OBS'Yİ BAŞLAT" Click="LaunchObs_Click"/>
+     <Button Content="3 • OBS'YE BAĞLAN" Click="Connect_Click"/>
+     <Button Content="4 • TEK TUŞLA OTOMATİK KUR" FontWeight="Bold" FontSize="16" Click="Optimize_Click"/>
+    </StackPanel>
+   </Border>
+   <Border Grid.Column="1" BorderBrush="#555" BorderThickness="1" CornerRadius="10" Padding="18">
+    <StackPanel>
+     <TextBlock Text="İŞLEM GÜNLÜĞÜ" FontSize="18" FontWeight="Bold"/>
+     <TextBox x:Name="LogBox" Margin="0,14,0,0" Height="470" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+     <TextBlock Margin="0,12,0,0" Text="Program önce OBS profilini yedekler. Stream key/hesap şifresi istemez ve kaydetmez." TextWrapping="Wrap"/>
+    </StackPanel>
+   </Border>
+  </Grid>
+ </Grid>
+</Window>
