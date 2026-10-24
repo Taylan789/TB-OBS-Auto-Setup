@@ -1,12 +1,1 @@
-TB OBS Auto Setup - V34 Optimized Event-Driven OBS AI
-
-V34 highlights:
-- Persistent OBS WebSocket receive loop
-- Concurrent request correlation by requestId
-- Serialized WebSocket sends only (not whole OBS calls)
-- Automatic pending request failure on connection loss
-- OBS event-driven cache invalidation
-- Smaller AI conversation context (16 messages)
-- Existing tool-only OBS control architecture preserved
-- No API key or model field in the UI
-- Local Ollama AI architecture preserved
+V34.1 - Build Fix: explicit System.IO imports

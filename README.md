@@ -42,3 +42,8 @@ Stream key gibi gizli bilgiler AI geçmişine gönderilmemelidir.
 
 GitHub Actions Windows üzerinde .NET 8 self-contained single-file EXE üretir.
 Assembly adı `TB_OBS_Easy.exe`'dir.
+
+
+## V34.1 build fix
+
+Added explicit `using System.IO;` imports to `ObsWebSocketClient.cs` and `HardwareInfoService.cs` so builds do not depend on generated implicit global usings for `MemoryStream`, `InvalidDataException`, `File`, and `Path`. No runtime behavior was changed.
