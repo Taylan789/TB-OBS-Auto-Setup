@@ -52,7 +52,7 @@
               <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <Button Content="AI DURUMUNU KONTROL ET" Click="CheckAi_Click" Padding="14,9" Margin="10,0,0,0"/>
                 <Button Content="İPTAL" Click="CancelAi_Click" Padding="14,9" Margin="8,0,0,0"/>
-                <Button Content="YEREL AI KURULUMU" Click="InstallAi_Click" Padding="14,9" Margin="8,0,0,0"/>
+                <Button Content="AI HAZIRLA" Click="InstallAi_Click" Padding="14,9" Margin="8,0,0,0"/>
               </StackPanel>
               <CheckBox x:Name="AllowActionsBox" Grid.Column="2" Content="AI işlemleri otomatik uygulasın" IsChecked="True" VerticalAlignment="Center" Margin="12,0,0,0"/>
             </Grid>
@@ -88,7 +88,7 @@
             <Border Background="{StaticResource Surface2}" CornerRadius="9" Padding="12" Margin="4,10,4,0">
               <StackPanel>
                 <TextBlock Text="İlk kullanım" FontWeight="SemiBold"/>
-                <TextBlock Text="1) Yerel AI motorunu kur • 2) AI durumunu kontrol et • 3) OBS WebSocket'e bağlan • 4) Normal Türkçe komut yaz." TextWrapping="Wrap" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
+                <TextBlock Text="1) TB OBS'yi aç • 2) TB AI otomatik hazırlanır • 3) OBS WebSocket'e bağlan • 4) Normal Türkçe komut yaz." TextWrapping="Wrap" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
               </StackPanel>
             </Border>
           </StackPanel>

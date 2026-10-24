@@ -13,6 +13,7 @@ public sealed class AiObsService
     private readonly HttpClient http = new() { Timeout = TimeSpan.FromSeconds(120) };
     private readonly ObsWebSocketClient obs;
     private readonly HardwareInfoService hardware = new();
+    private readonly OllamaBootstrapper ollama = new();
     private readonly List<JsonElement> conversation = new();
     private readonly SemaphoreSlim aiLock = new(1, 1);
     private static readonly TimeSpan ReadCacheTtl = TimeSpan.FromSeconds(1.5);
@@ -26,6 +27,7 @@ public sealed class AiObsService
     {
         obs = obsClient;
         obs.EventReceived += OnObsEvent;
+        ollama.StatusChanged += message => { };
         obs.ConnectionLost += () => readCache.Clear();
     }
 
@@ -37,43 +39,9 @@ public sealed class AiObsService
 
     public async Task<(bool ok, string message, string model)> CheckAsync(CancellationToken ct = default)
     {
-        try
-        {
-            using var response = await http.GetAsync(BaseUrl.TrimEnd('/') + "/api/tags", ct);
-            if (!response.IsSuccessStatusCode)
-                return (false, "Yerel AI servisi cevap vermedi.", "");
-
-            using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
-            var models = doc.RootElement.TryGetProperty("models", out var m) ? m : default;
-            if (models.ValueKind != JsonValueKind.Array || models.GetArrayLength() == 0)
-            {
-                bool pulled = await TryPullModelAsync("qwen3:4b", ct);
-                if (!pulled) return (false, "Yerel AI bulundu ama model yüklenemedi. Ollama çalışıyor olmalı ve ilk kurulumda internet bağlantısı gerekebilir.", "");
-                using var retry = await http.GetAsync(BaseUrl.TrimEnd('/') + "/api/tags", ct);
-                using var retryDoc = JsonDocument.Parse(await retry.Content.ReadAsStringAsync(ct));
-                models = retryDoc.RootElement.TryGetProperty("models", out var retryModels) ? retryModels : default;
-            }
-
-            string selected = "";
-            foreach (var item in models.EnumerateArray())
-            {
-                if (item.TryGetProperty("name", out var n))
-                {
-                    selected = n.GetString() ?? "";
-                    if (selected.Contains("qwen", StringComparison.OrdinalIgnoreCase)) break;
-                }
-            }
-            Model = selected;
-            return (true, $"Yerel AI hazır • {Model}", Model);
-        }
-        catch (HttpRequestException)
-        {
-            return (false, "Yerel AI bulunamadı. Ollama çalışıyor mu?", "");
-        }
-        catch (Exception ex)
-        {
-            return (false, "AI kontrolü başarısız: " + ex.Message, "");
-        }
+        var ready = await ollama.EnsureReadyAsync(ct);
+        if (ready.ok) Model = ready.model;
+        return ready;
     }
 
     public async Task<string> AskAsync(string userText, CancellationToken ct = default)
@@ -146,16 +114,6 @@ public sealed class AiObsService
         }
     }
 
-    private async Task<bool> TryPullModelAsync(string model, CancellationToken ct)
-    {
-        try
-        {
-            using var content = new StringContent(JsonSerializer.Serialize(new { name = model, stream = false }), Encoding.UTF8, "application/json");
-            using var response = await http.PostAsync(BaseUrl.TrimEnd('/') + "/api/pull", content, ct);
-            return response.IsSuccessStatusCode;
-        }
-        catch { return false; }
-    }
 
     private object[] BuildMessages()
     {

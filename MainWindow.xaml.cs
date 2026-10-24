@@ -12,6 +12,7 @@ public partial class MainWindow : Window
     private readonly ObsWebSocketClient obs = new();
     private readonly AiObsService ai;
     private readonly HardwareInfoService hardware = new();
+    private readonly OllamaBootstrapper ollamaBootstrapper = new();
     private readonly SemaphoreSlim obsRefreshLock = new(1, 1);
     private readonly DispatcherTimer connectionTimer;
     private CancellationTokenSource? aiRequestCts;
@@ -20,6 +21,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         ai = new AiObsService(obs);
+        ollamaBootstrapper.StatusChanged += message => Dispatcher.InvokeAsync(() => { AiStatus.Text = message; AiEngineText.Text = "  " + message; });
         connectionTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
         connectionTimer.Tick += async (_, _) => await MonitorConnectionAsync();
         connectionTimer.Start();
@@ -291,22 +293,7 @@ public partial class MainWindow : Window
 
     private async void CheckAi_Click(object sender, RoutedEventArgs e) => await CheckAiAsync();
 
-    private void InstallAi_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://ollama.com/download/windows",
-                UseShellExecute = true
-            });
-            AiStatus.Text = "Yerel AI kurulumu için Ollama indirme sayfası açıldı.";
-        }
-        catch (Exception ex)
-        {
-            AiStatus.Text = "Kurulum sayfası açılamadı: " + ex.Message;
-        }
-    }
+    private async void InstallAi_Click(object sender, RoutedEventArgs e) => await CheckAiAsync();
 
     private async Task CheckAiAsync()
     {

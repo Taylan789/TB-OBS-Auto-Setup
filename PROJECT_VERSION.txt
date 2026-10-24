@@ -1,1 +1,9 @@
-V34.1 - Build Fix: explicit System.IO imports
+V35 - Invisible Ollama Bootstrap
+
+- Ollama kullanıcıya teknik kurulum gösterilmeden otomatik hazırlanır.
+- Ollama yoksa resmi OllamaSetup.exe otomatik indirilir ve /VERYSILENT ile kurulur.
+- Ollama arka planda başlatılır.
+- qwen3:4b modeli otomatik kontrol edilir; yoksa Ollama API üzerinden indirilir.
+- Kullanıcıya API key, Ollama adresi veya model ayarı gösterilmez.
+- İlk açılışta TB AI durum metni üzerinden ilerleme gösterilir.
+- Ollama kurulumu TB OBS'nin açılışını bloke edecek ayrı bir pencere oluşturmaz.
