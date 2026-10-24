@@ -1,180 +1,31 @@
 <Window x:Class="TB_OBS_AutoSetup.MainWindow"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="TB OBS Auto Setup • Live Center" Width="1560" Height="960" MinWidth="1200" MinHeight="780"
- WindowStartupLocation="CenterScreen" Background="{StaticResource BgBrush}">
- <Grid Margin="18">
-  <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-
-  <!-- SIDEBAR -->
-  <Border Grid.Column="0" Background="{StaticResource SidebarBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="18" Padding="16" Margin="0,0,14,0">
-   <Grid>
-    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-    <StackPanel>
-     <StackPanel Orientation="Horizontal">
-      <Border Width="44" Height="44" CornerRadius="13" Background="{StaticResource GreenDarkBrush}" BorderBrush="#286B49" BorderThickness="1">
-       <TextBlock Text="TB" Foreground="{StaticResource GreenBrush}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-      </Border>
-      <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="TB OBS" Foreground="{StaticResource TextBrush}" FontSize="17" FontWeight="Bold"/><TextBlock Text="LIVE CENTER" Foreground="{StaticResource GreenBrush}" FontSize="9" FontWeight="Bold"/></StackPanel>
-     </StackPanel>
-     <Border Background="#101820" CornerRadius="10" Padding="10" Margin="0,18,0,0">
-      <StackPanel><TextBlock Text="SYSTEM STATUS" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/><TextBlock x:Name="ConnectionText" Text="● OBS BAĞLI DEĞİL" Foreground="{StaticResource MutedBrush}" FontSize="11" FontWeight="SemiBold" Margin="0,5,0,0"/><TextBlock x:Name="PlanText" Text="Sistem hazır" Foreground="{StaticResource GreenBrush}" FontSize="10" Margin="0,3,0,0" TextWrapping="Wrap"/></StackPanel>
-     </Border>
-    </StackPanel>
-    <StackPanel Grid.Row="1" Margin="0,24,0,0">
-     <TextBlock Text="WORKSPACE" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold" Margin="4,0,0,8"/>
-     <Button Style="{StaticResource NavButton}" Content="▦   Dashboard"/>
-     <Button Style="{StaticResource NavButton}" Content="◉   Yayın Merkezi"/>
-     <Button Style="{StaticResource NavButton}" Content="◌   Ses &amp; Cihazlar"/>
-     <Button Style="{StaticResource NavButton}" Content="▤   Tanılama"/>
-     <Button Style="{StaticResource NavButton}" Content="↶   Backup &amp; Recovery"/>
-    </StackPanel>
-    <StackPanel Grid.Row="3">
-     <Border Background="#111720" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="11" Padding="11" Margin="0,0,0,10">
-      <StackPanel><TextBlock Text="PRO MODE" Foreground="{StaticResource PurpleBrush}" FontSize="9" FontWeight="Bold"/><TextBlock Text="One-click yayın akışı" Foreground="{StaticResource TextBrush}" FontSize="11" Margin="0,4,0,0"/><TextBlock Text="Hazırla → doğrula → canlı" Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,3,0,0"/></StackPanel>
-     </Border>
-     <TextBlock Text="V10 • Windows x64" Foreground="{StaticResource MutedBrush}" FontSize="9"/>
-     <TextBlock Text="OBS WebSocket 5.x" Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,2,0,0"/>
-    </StackPanel>
-   </Grid>
-  </Border>
-
-  <!-- MAIN -->
-  <Grid Grid.Column="1">
-   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-   <Grid>
-    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-    <StackPanel><TextBlock Text="YAYIN KONTROL MERKEZİ" Foreground="{StaticResource TextBrush}" FontSize="27" FontWeight="Bold"/><TextBlock Text="OBS'yi hazırla, doğrula ve tek akışta canlıya geç." Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,4,0,0"/></StackPanel>
-    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-     <Border Background="#101820" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="9" Padding="11,7" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="{StaticResource GreenBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/><TextBlock Text="LOCAL ONLY" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/></StackPanel></Border>
-     <TextBlock Text="TB OBS AUTO SETUP" Foreground="{StaticResource PurpleBrush}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
-    </StackPanel>
-   </Grid>
-
-   <!-- METRICS -->
-   <Grid Grid.Row="1" Margin="0,18,0,16">
-    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <Border Style="{StaticResource CardStyle}" Margin="0,0,5,0"><StackPanel><TextBlock Text="CPU" Style="{StaticResource CardLabel}"/><TextBlock x:Name="CpuCard" Text="—" Style="{StaticResource CardValue}"/></StackPanel></Border>
-    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="5,0"><StackPanel><TextBlock Text="GPU" Style="{StaticResource CardLabel}"/><TextBlock x:Name="GpuCard" Text="—" Style="{StaticResource CardValue}"/></StackPanel></Border>
-    <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="5,0"><StackPanel><TextBlock Text="RAM" Style="{StaticResource CardLabel}"/><TextBlock x:Name="RamCard" Text="—" Style="{StaticResource CardValue}"/></StackPanel></Border>
-    <Border Grid.Column="3" Style="{StaticResource CardStyle}" Margin="5,0"><StackPanel><TextBlock Text="ENCODER" Style="{StaticResource CardLabel}"/><TextBlock x:Name="EncoderCard" Text="—" Foreground="{StaticResource GreenBrush}" FontSize="13" FontWeight="Bold" Margin="0,5,0,0"/></StackPanel></Border>
-    <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="5,0"><StackPanel><TextBlock Text="BITRATE" Style="{StaticResource CardLabel}"/><TextBlock x:Name="BitrateCard" Text="—" Foreground="{StaticResource PurpleBrush}" FontSize="13" FontWeight="Bold" Margin="0,5,0,0"/></StackPanel></Border>
-    <Border Grid.Column="5" Style="{StaticResource CardStyle}" Margin="5,0,0,0"><StackPanel><TextBlock Text="OBS HEALTH" Style="{StaticResource CardLabel}"/><TextBlock x:Name="HealthCard" Text="BEKLENİYOR" Foreground="{StaticResource AmberBrush}" FontSize="13" FontWeight="Bold" Margin="0,5,0,0"/></StackPanel></Border>
-   </Grid>
-
-   <Grid Grid.Row="2">
-    <Grid.ColumnDefinitions><ColumnDefinition Width="380"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-
-    <!-- SETUP PANEL -->
-    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="16" Margin="0,0,12,0">
-     <ScrollViewer VerticalScrollBarVisibility="Auto">
-      <StackPanel>
-       <TextBlock Text="LIVE WORKFLOW" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/>
-       <TextBlock Text="Yayına çıkış" Foreground="{StaticResource TextBrush}" FontSize="20" FontWeight="Bold" Margin="0,3,0,1"/>
-       <TextBlock Text="Önce sistemi hazırla, sonra son kontrolü geç." Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,13"/>
-       <Button Content="1  •  SİSTEMİ ANALİZ ET" Click="Analyze_Click"/>
-       <Button Content="2  •  OBS'Yİ BAŞLAT" Click="LaunchObs_Click"/>
-       <Button Content="3  •  OBS'YE BAĞLAN" Click="Connect_Click"/>
-       <Button Content="4  •  HAZIRLA + CANLIYA GEÇ" Click="PrepareAndGoLive_Click" Style="{StaticResource PrimaryButton}"/>
-       <TextBlock Text="GÜVENLİ KONTROL" Foreground="{StaticResource GreenBrush}" FontSize="9" FontWeight="Bold" Margin="0,6,0,6"/>
-       <Button Content="SADECE YAYINA HAZIRLA" Click="Optimize_Click"/>
-       <Button Content="YAYINI BAŞLAT • KONTROLLÜ" Click="GoLive_Click" Background="{StaticResource PurpleDarkBrush}" Foreground="{StaticResource PurpleBrush}" BorderBrush="#5A3A89"/>
-       <Button Content="YAYINI DURDUR" Click="StopLive_Click" Style="{StaticResource DangerButton}"/>
-       <CheckBox x:Name="RecordAlongsideCheckBox" Content="Yayınla birlikte MKV kayıt başlat" IsChecked="False"/>
-       <CheckBox x:Name="ReplayBufferAlongsideCheckBox" Content="Yayın başlayınca Replay Buffer" IsChecked="False" ToolTip="Replay Buffer OBS'de etkin olmalı."/>
-
-       <Separator Margin="0,8"/>
-       <TextBlock Text="KAYNAK &amp; CİHAZLAR" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/>
-       <TextBlock Text="Yayın modu" Foreground="{StaticResource TextBrush}" FontSize="10" Margin="0,8,0,4"/>
-       <ComboBox x:Name="SourceModeBox" SelectedIndex="1" SelectionChanged="SetupSelection_Changed"><ComboBoxItem Content="PC oyunu • Game Capture"/><ComboBoxItem Content="PS5 • HDMI capture"/></ComboBox>
-       <TextBlock Text="Capture cihazı" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <ComboBox x:Name="CaptureDeviceBox" SelectionChanged="SetupSelection_Changed"/>
-       <TextBlock Text="Webcam • isteğe bağlı" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <ComboBox x:Name="CameraDeviceBox" SelectionChanged="SetupSelection_Changed"/>
-       <TextBlock Text="Mikrofon" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <ComboBox x:Name="MicrophoneDeviceBox" SelectionChanged="SetupSelection_Changed"/>
-       <TextBlock Text="Masaüstü sesi" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <ComboBox x:Name="DesktopAudioDeviceBox" SelectionChanged="SetupSelection_Changed"/>
-
-       <Separator Margin="0,7"/>
-       <TextBlock Text="YAYIN HEDEFİ" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/>
-       <TextBlock Text="Platform" Foreground="{StaticResource TextBrush}" FontSize="10" Margin="0,8,0,4"/>
-       <ComboBox x:Name="PlatformBox" SelectedIndex="0" SelectionChanged="Platform_Changed"><ComboBoxItem Content="Kick"/><ComboBoxItem Content="YouTube"/><ComboBoxItem Content="Twitch"/><ComboBoxItem Content="Özel / Manual"/></ComboBox>
-       <CheckBox x:Name="UseCustomRtmpCheckBox" Content="Custom RTMP hedefini uygula" IsChecked="False" Foreground="{StaticResource GreenBrush}" Checked="CustomRtmp_Changed" Unchecked="CustomRtmp_Changed"/>
-       <TextBlock Text="RTMP sunucu" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <TextBox x:Name="StreamServerBox" Text="" ToolTip="Platformun verdiği RTMP adresi" TextChanged="CustomRtmp_Changed"/>
-       <TextBlock Text="Yayın anahtarı" Foreground="{StaticResource TextBrush}" FontSize="10"/>
-       <PasswordBox x:Name="StreamKeyBox" PasswordChanged="CustomRtmp_Changed"/>
-       <TextBlock Text="Anahtar log'a yazılmaz; sadece OBS'ye uygulanır." Foreground="{StaticResource MutedBrush}" FontSize="9" TextWrapping="Wrap" Margin="0,0,0,4"/>
-
-       <TextBlock Text="VIDEO PROFİLİ" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold" Margin="0,7,0,0"/>
-       <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,4,0"><TextBlock Text="Çözünürlük" Foreground="{StaticResource MutedBrush}" FontSize="9"/><ComboBox x:Name="ResolutionBox" SelectedIndex="0" SelectionChanged="SetupSelection_Changed"><ComboBoxItem Content="1920x1080"/><ComboBoxItem Content="1664x936"/><ComboBoxItem Content="1280x720"/></ComboBox></StackPanel><StackPanel Grid.Column="1" Margin="4,0,0,0"><TextBlock Text="FPS" Foreground="{StaticResource MutedBrush}" FontSize="9"/><ComboBox x:Name="FpsBox" SelectedIndex="0" SelectionChanged="SetupSelection_Changed"><ComboBoxItem Content="60"/><ComboBoxItem Content="30"/></ComboBox></StackPanel></Grid>
-       <TextBlock Text="Upload • Mbps" Foreground="{StaticResource MutedBrush}" FontSize="9"/>
-       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions><TextBox x:Name="UploadBox" Text="" ToolTip="Upload test sonucu veya manuel değer"/><Button Grid.Column="1" Content="ÖNERİ HESAPLA" Click="Bitrate_Click" Margin="8,0,0,6"/></Grid>
-       <TextBlock x:Name="BitrateRecommendation" Text="Öneri: upload testi yap." Foreground="{StaticResource GreenBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,6"/>
-
-       <Separator Margin="0,6"/>
-       <TextBlock Text="TOOLS" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/>
-       <Button Content="UPLOAD HIZ TESTİ" Click="UploadTest_Click"/>
-       <Button Content="OBS HEALTH TARAMASI" Click="Health_Click"/>
-       <Button Content="5 SANİYE PERFORMANS TESTİ" Click="Performance_Click"/>
-       <Button Content="SAHNE / KAYNAK ENVANTERİ" Click="Inventory_Click"/>
-       <Button Content="TANILAMA RAPORU DIŞA AKTAR" Click="ExportDiagnostic_Click"/>
-       <Button Content="REPLAY BUFFER'I BAŞLAT" Click="Replay_Click"/>
-       <Button Content="BACKUP KLASÖRÜNÜ AÇ" Click="OpenBackup_Click"/>
-       <Button Content="SON YEDEĞİ GERİ YÜKLE" Click="Rollback_Click" Style="{StaticResource DangerButton}"/>
-
-       <Separator Margin="0,6"/>
-       <TextBlock Text="OBS WEBSOCKET" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/>
-       <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="82"/></Grid.ColumnDefinitions><TextBox x:Name="HostBox" Text="127.0.0.1"/><TextBox x:Name="PortBox" Grid.Column="1" Text="4455" Margin="8,0,0,6"/></Grid>
-       <PasswordBox x:Name="PasswordBox"/>
-       <TextBlock Text="OBS 28+ • 127.0.0.1:4455" Foreground="{StaticResource MutedBrush}" FontSize="9"/>
-      </StackPanel>
-     </ScrollViewer>
-    </Border>
-
-    <!-- DASHBOARD -->
-    <Grid Grid.Column="1">
-     <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="188"/></Grid.RowDefinitions>
-     <TabControl>
-      <TabItem Header="OVERVIEW">
-       <Grid Margin="18">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <Border Background="#101820" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="16" Padding="18">
-         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-          <StackPanel><TextBlock Text="LIVE READINESS" Foreground="{StaticResource GreenBrush}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Yayın durumun" Foreground="{StaticResource TextBrush}" FontSize="24" FontWeight="Bold" Margin="0,4,0,0"/><TextBlock x:Name="ReadinessText" Text="Yayın ön kontrolü henüz yapılmadı." Foreground="{StaticResource AmberBrush}" FontSize="12" Margin="0,5,0,0" TextWrapping="Wrap"/></StackPanel>
-          <Border Grid.Column="1" Background="{StaticResource GreenDarkBrush}" CornerRadius="14" Padding="17,11"><StackPanel><TextBlock Text="CURRENT PROFILE" Foreground="{StaticResource MutedBrush}" FontSize="8" HorizontalAlignment="Center"/><TextBlock x:Name="ProfileText" Text="1080p60" Foreground="{StaticResource GreenBrush}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,2,0,0"/><TextBlock x:Name="ProfileDetail" Text="Advanced Output" Foreground="{StaticResource TextBrush}" FontSize="9" HorizontalAlignment="Center"/></StackPanel></Border>
-         </Grid>
-        </Border>
-        <Grid Grid.Row="1" Margin="0,12,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-         <Border Style="{StaticResource InnerCard}" Margin="0,0,6,0"><StackPanel><TextBlock Text="SCENES" Style="{StaticResource CardLabel}"/><TextBlock x:Name="SceneCountText" Text="—" Foreground="{StaticResource GreenBrush}" FontSize="25" FontWeight="Bold" Margin="0,5,0,0"/><TextBlock Text="TB workspace" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel></Border>
-         <Border Grid.Column="1" Style="{StaticResource InnerCard}" Margin="6,0"><StackPanel><TextBlock Text="AUDIO CHAIN" Style="{StaticResource CardLabel}"/><TextBlock Text="SUPPRESS → COMPRESS" Foreground="{StaticResource TextBrush}" FontSize="12" FontWeight="Bold" Margin="0,8,0,0"/><TextBlock Text="OBS destekliyorsa otomatik" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel></Border>
-         <Border Grid.Column="2" Style="{StaticResource InnerCard}" Margin="6,0"><StackPanel><TextBlock Text="HEALTH" Style="{StaticResource CardLabel}"/><TextBlock x:Name="StatsText" Text="FPS — • Render — • Dropped —" Foreground="{StaticResource TextBrush}" FontSize="11" FontWeight="Bold" Margin="0,8,0,0" TextWrapping="Wrap"/></StackPanel></Border>
-         <Border Grid.Column="3" Style="{StaticResource InnerCard}" Margin="6,0,0,0"><StackPanel><TextBlock Text="SECURITY" Style="{StaticResource CardLabel}"/><TextBlock Text="LOCAL ONLY" Foreground="{StaticResource PurpleBrush}" FontSize="14" FontWeight="Bold" Margin="0,8,0,0"/><TextBlock Text="Anahtar loglanmaz." Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel></Border>
-        </Grid>
-        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="18">
-         <StackPanel><TextBlock Text="STREAM ENGINE" Foreground="{StaticResource MutedBrush}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Hazırlık sırası" Foreground="{StaticResource TextBrush}" FontSize="18" FontWeight="Bold" Margin="0,3,0,12"/>
-          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-           <StackPanel Margin="0,0,8,0"><Ellipse Width="28" Height="28" Fill="{StaticResource GreenDarkBrush}" HorizontalAlignment="Left"><Ellipse.Effect><DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.25"/></Ellipse.Effect></Ellipse><TextBlock Text="1  Analyze" Foreground="{StaticResource TextBrush}" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="Donanım &amp; cihaz" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel>
-           <StackPanel Grid.Column="1" Margin="8,0"><Ellipse Width="28" Height="28" Fill="{StaticResource PurpleDarkBrush}" HorizontalAlignment="Left"/><TextBlock Text="2  Configure" Foreground="{StaticResource TextBrush}" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="OBS &amp; sahneler" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel>
-           <StackPanel Grid.Column="2" Margin="8,0"><Ellipse Width="28" Height="28" Fill="#2B2112" HorizontalAlignment="Left"/><TextBlock Text="3  Verify" Foreground="{StaticResource TextBrush}" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="Final Live Gate" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel>
-           <StackPanel Grid.Column="3" Margin="8,0,0,0"><Ellipse Width="28" Height="28" Fill="#211219" HorizontalAlignment="Left"/><TextBlock Text="4  Go Live" Foreground="{StaticResource TextBrush}" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="OBS çıkış doğrulama" Foreground="{StaticResource MutedBrush}" FontSize="9"/></StackPanel>
-          </Grid>
-         </StackPanel>
-        </Border>
-       </Grid>
-      </TabItem>
-      <TabItem Header="ACTIVITY"><Grid Margin="18"><TextBox x:Name="LogBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Cascadia Mono,Consolas" FontSize="12" Background="#080C11" BorderBrush="{StaticResource BorderBrush}"/></Grid></TabItem>
-      <TabItem Header="WHAT'S NEW"><ScrollViewer Margin="20"><StackPanel><TextBlock Text="TB OBS LIVE CENTER" FontSize="25" FontWeight="Bold" Foreground="{StaticResource GreenBrush}"/><TextBlock Text="Profesyonel yayın akışı" FontSize="13" Foreground="{StaticResource MutedBrush}" Margin="0,3,0,12"/><TextBlock Text="• Tek akış: analiz → yapılandır → doğrula → canlı&#10;• Gerçek cihaz seçimleri ve güvenli kaynak eşleştirme&#10;• Final Live Gate ile eksik kaynaklarda yayını engelleme&#10;• Custom RTMP yalnızca kullanıcı seçerse uygulanır&#10;• Backup / rollback ve yerel tanılama&#10;• OBS health, performans ve inventory araçları&#10;• Self-contained Windows x64" Foreground="{StaticResource TextBrush}" FontSize="14" LineHeight="27"/></StackPanel></ScrollViewer></TabItem>
-     </TabControl>
-
-     <Grid Grid.Row="1" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <Border Style="{StaticResource InnerCard}" Margin="0,0,6,0"><StackPanel><TextBlock Text="AUTO TUNE" Style="{StaticResource CardLabel}"/><TextBlock Text="Upload + GPU + CPU" Foreground="{StaticResource TextBrush}" FontSize="13" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="Profil ve bitrate hazırlığı." Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,3,0,0"/></StackPanel></Border>
-      <Border Grid.Column="1" Style="{StaticResource InnerCard}" Margin="6,0"><StackPanel><TextBlock Text="RECOVERY" Style="{StaticResource CardLabel}"/><TextBlock Text="Backup + Rollback" Foreground="{StaticResource TextBrush}" FontSize="13" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="Değişiklik öncesi geri dönüş." Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,3,0,0"/></StackPanel></Border>
-      <Border Grid.Column="2" Style="{StaticResource InnerCard}" Margin="6,0,0,0"><StackPanel><TextBlock Text="OBS ENGINE" Style="{StaticResource CardLabel}"/><TextBlock Text="WebSocket 5.x" Foreground="{StaticResource TextBrush}" FontSize="13" FontWeight="Bold" Margin="0,7,0,0"/><TextBlock Text="Yerel bağlantı + doğrulama." Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,3,0,0"/></StackPanel></Border>
-     </Grid>
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TB OBS — OBS For Everyone V28" Width="1180" Height="760" Background="#101014" Foreground="White">
+    <Grid Margin="18">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel DockPanel.Dock="Left"><TextBlock Text="TB OBS" FontSize="28" FontWeight="Bold"/><TextBlock Text="OBS For Everyone • AI ile konuş, OBS yapsın" Foreground="#AFAFB8"/></StackPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="OBS:" VerticalAlignment="Center" Margin="0,0,6,0"/><TextBlock x:Name="StatusText" Text="Bağlı değil" Foreground="#FF7070" VerticalAlignment="Center"/><Button Content="OBS'YE BAĞLAN" Click="Connect_Click" Margin="14,0,0,0" Padding="14,7"/></StackPanel>
+        </DockPanel>
+        <TabControl Grid.Row="1" Background="#17171D">
+            <TabItem Header="🤖 TB AI">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Border Padding="12" Background="#1E1E26" CornerRadius="8" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal"><TextBlock Text="OpenAI API Key:" VerticalAlignment="Center"/><PasswordBox x:Name="ApiKeyBox" Width="330" Margin="10,0,18,0"/><TextBlock Text="Model:" VerticalAlignment="Center"/><TextBox x:Name="ModelBox" Text="gpt-6-astra" Width="150" Margin="8,0,18,0"/><CheckBox x:Name="AllowActionsBox" Content="AI işlemleri otomatik uygulasın" IsChecked="True" VerticalAlignment="Center"/></StackPanel>
+                    </Border>
+                    <Grid Grid.Row="1"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <ScrollViewer x:Name="ChatScroll" VerticalScrollBarVisibility="Auto" Background="#0D0D11"><TextBlock x:Name="ChatText" TextWrapping="Wrap" Padding="18" FontSize="15"/></ScrollViewer>
+                        <Border Grid.Row="1" Background="#1E1E26" Padding="10" Margin="0,10,0,0" CornerRadius="8"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="PromptBox" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" KeyDown="Prompt_KeyDown" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0"/><Button Grid.Column="1" Content="GÖNDER" Click="SendAi_Click" Padding="18,10" VerticalAlignment="Bottom"/></Grid></Border>
+                    </Grid>
+                    <TextBlock Grid.Row="2" x:Name="AiStatus" Text="Hazır. Örnek: 'PS5 yayın sahnesi oluştur ve kamerayı sağ alta koy.'" Foreground="#AFAFB8" Margin="2,8,0,0"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="🟢 YENİ KULLANICI"><ScrollViewer><StackPanel Margin="22"><TextBlock Text="İlk yayınını kolayca hazırla" FontSize="25" FontWeight="Bold"/><TextBlock Text="Ne yapmak istediğini seç. AI istersen tüm kurulumu senin yerine yapabilir." Foreground="#B5B5BE" Margin="0,5,0,18"/><Button Content="🤖 AI ile kurulum yap" Click="FocusAi_Click" Padding="15" HorizontalAlignment="Left"/><TextBlock Text="\nTemel mantık" FontSize="20" FontWeight="Bold"/><TextBlock Text="Sahne = yayın ekranı • Kaynak = ekran/kamera/oyun gibi parça • Filtre = kaynak veya sese uygulanan işlem • Çıkış = yayın/kayıt kalitesi" TextWrapping="Wrap" Margin="0,8,0,0"/></StackPanel></ScrollViewer></TabItem>
+            <TabItem Header="🎛 OBS KONTROL"><Grid Margin="12"><Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><StackPanel><Button Content="Yenile" Click="Refresh_Click" Margin="0,0,0,8"/><TextBlock Text="Sahneler" FontWeight="Bold"/><ListBox x:Name="ScenesList" SelectionChanged="Scene_Changed" Height="420"/></StackPanel><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="Kaynaklar" FontWeight="Bold"/><ListBox x:Name="SourcesList" Height="300"/><StackPanel Orientation="Horizontal" Margin="0,10,0,0"><Button Content="Sahneyi Aç" Click="SetScene_Click" Margin="0,0,8,0"/><Button Content="Kaynağı Göster/Gizle" Click="ToggleSource_Click" Margin="0,0,8,0"/><Button Content="Kaynağı Sil" Click="DeleteSource_Click"/></StackPanel><TextBlock x:Name="ControlStatus" Text="OBS'ye bağlanınca burada kontrol edebilirsin." TextWrapping="Wrap" Margin="0,14,0,0"/></StackPanel></Grid></TabItem>
+            <TabItem Header="📚 OBS'Yİ ÖĞREN"><ScrollViewer><TextBlock x:Name="GuideText" Text="OBS'yi öğrenmek için TB AI'ya soru sor." TextWrapping="Wrap" Padding="22" FontSize="16"/></ScrollViewer></TabItem>
+        </TabControl>
+        <TextBlock Grid.Row="2" x:Name="Footer" Text="TB OBS V28 • OBS WebSocket + AI Tool Calling" Foreground="#777780" Margin="2,10,0,0"/>
     </Grid>
-   </Grid>
-  </Grid>
- </Grid>
 </Window>

@@ -1,3 +1,5 @@
-TB OBS Auto Setup V11 Professional Live Center
+TB OBS Auto Setup V28 — AI OBS Assistant
 
-V11 focuses on deterministic preflight, fresh inventory validation, safe live-start gating, and idempotent OBS scene/source setup.
+OBS For Everyone: kullanıcı doğal Türkçe ile komut verir; TB AI, izin verilen function tools üzerinden OBS WebSocket ile gerçek işlemleri yapar.
+
+AI entegrasyonu OpenAI Responses API kullanır. API anahtarı kullanıcı tarafından uygulama içinde girilir ve loglanmaz.
