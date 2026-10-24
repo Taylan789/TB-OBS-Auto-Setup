@@ -1,28 +1,44 @@
-# TB OBS Auto Setup V28 — OBS For Everyone
+# TB OBS Auto Setup V34
 
-V28'in ana özelliği **TB AI**: kullanıcı doğal Türkçe ile OBS hakkında konuşur ve AI gerektiğinde OBS WebSocket üzerinden gerçek işlemleri yapar.
+TB OBS, OBS'yi herkes için anlaşılır hale getiren Türkçe AI yardımcı uygulamasıdır.
 
-## Örnek komutlar
-- PS5 için yayın sahnesi oluştur.
-- Aktif sahneyi Oyun yap.
-- Kamerayı sağ alta koy.
-- Şu kaynağı gizle.
-- Kaydı başlat.
-- Yayını başlat.
-- 1080p 60 FPS yap.
-- OBS durumumu kontrol et.
+## V34 performans mimarisi
 
-## Mimari
-Kullanıcı → OpenAI Responses API → güvenli TB OBS tools → OBS WebSocket → doğrulama.
+- OBS WebSocket bağlantısı tek ve kalıcıdır.
+- Ayrı bir receive loop OBS mesajlarını sürekli dinler.
+- Request/response mesajları `requestId` ile eşleştirilir.
+- Aynı anda birden fazla OBS isteği bekleyebilir; yalnızca WebSocket gönderimleri sıraya alınır.
+- OBS event geldiğinde AI/uygulama cache'i geçersizleşir. Böylece gereksiz polling azalır.
+- AI geçmişi son 16 mesajla sınırlandırılır.
+- Mutasyonlardan sonra cache temizlenir.
+- OBS bağlantısı koparsa bekleyen istekler güvenli şekilde sonlandırılır.
 
-AI doğrudan rastgele kod çalıştırmaz. Yalnızca uygulamanın tanımladığı OBS tool'larını çağırabilir.
+## AI
 
-## Kurulum
-1. OBS 28+ aç ve obs-websocket'i etkinleştir.
-2. OBS WebSocket portunu 4455 olarak bırak veya sonraki sürümde bağlantı ayarlarını kullan.
-3. Uygulamayı çalıştır.
-4. OpenAI API key'ini TB AI ekranına gir.
-5. OBS'ye bağlan.
-6. AI'ya doğal Türkçe komut ver.
+TB AI yerel Ollama servisi üzerinden çalışır. Kullanıcıdan OpenAI API key istenmez.
 
-> Not: Bu sürüm Windows üzerinde GitHub Actions ile publish edilmek üzere hazırlanmıştır. Bu geliştirme ortamında Windows/.NET SDK bulunmadığı için burada gerçek `dotnet publish` doğrulaması yapılmamıştır.
+Varsayılan servis:
+`http://127.0.0.1:11434`
+
+İlk kurulumda uygun model yoksa uygulama `qwen3:4b` indirmeyi deneyebilir.
+
+## OBS WebSocket
+
+OBS 28 ve üzeri sürümlerde WebSocket yerleşik gelir.
+
+1. OBS'yi aç.
+2. Araçlar -> WebSocket Sunucu Ayarları.
+3. WebSocket sunucusunu etkinleştir.
+4. Portu kontrol et (varsayılan 4455).
+5. Şifre kullanıyorsan TB OBS bağlantı ekranına gir.
+6. TB OBS'den bağlan.
+
+## Güvenlik
+
+AI yalnızca uygulamanın tanımladığı OBS tool'larını çalıştırabilir. Rastgele Windows komutu çalıştırmaz.
+Stream key gibi gizli bilgiler AI geçmişine gönderilmemelidir.
+
+## Build
+
+GitHub Actions Windows üzerinde .NET 8 self-contained single-file EXE üretir.
+Assembly adı `TB_OBS_Easy.exe`'dir.

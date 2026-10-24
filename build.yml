@@ -23,7 +23,7 @@ jobs:
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TB-OBS-Easy-V28-win-x64
+          name: TB-OBS-Easy-V30-win-x64
           path: publish/TB_OBS_Easy.exe
           if-no-files-found: error
           retention-days: 14
